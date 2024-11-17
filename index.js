@@ -1,16 +1,35 @@
 const path = require('path');
-const fs = require('fs');
+const { marked } = require('marked');
+const yargs = require('yargs/yargs');
+const { hideBin } = require('yargs/helpers');
+const { getPackageName } = require('./lib/name');
+const { readMarkdownFileSync, writeHtmlFileSync } = require('./lib/file');
+const { describe } = require('yargs');
 
-const packageStr = fs.readFileSync(path.resolve(__dirname, 'package.json'), {
-  encoding: 'utf-8',
-});
-const package = JSON.parse(packageStr);
+// Node.jsのパスとスクリプトのパスは不要なのでhideBinで取り除く
+const { argv } = yargs(hideBin(process.argv))
+  // オプションの説明を追加
+  // --helpで説明が表示されるようになる
+  .option('name', { describe: 'CLI名を表示' })
+  .option('file', { describe: 'Markdownファイルのパス' })
+  .option('out', {
+    describe: 'html file',
+    default: 'article.html',
+  });
 
-// nameオプションのチェック
-const nameOption = process.argv.includes('--name');
+if (argv.name) {
+  const name = getPackageName();
 
-if (nameOption) {
   console.log(package.name);
-} else {
-  console.log('オプションがありません');
+
+  // nameオプションが入っていた場合は他のオプションを使わないので正常終了させる
+  process.exit(0);
 }
+
+// 指定されたMarkdownファイルを読み込む
+const markdownStr = readMarkdownFileSync(path.resolve(__dirname, argv.file));
+
+// Markdownをhtmlに反感
+const html = marked(markdownStr);
+
+writeHtmlFileSync(path.resolve(__dirname, argv.out), html);
