@@ -4,7 +4,6 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const { getPackageName } = require('./lib/name');
 const { readMarkdownFileSync, writeHtmlFileSync } = require('./lib/file');
-const { describe } = require('yargs');
 
 // Node.jsのパスとスクリプトのパスは不要なのでhideBinで取り除く
 const { argv } = yargs(hideBin(process.argv))
@@ -20,7 +19,7 @@ const { argv } = yargs(hideBin(process.argv))
 if (argv.name) {
   const name = getPackageName();
 
-  console.log(package.name);
+  console.log(name);
 
   // nameオプションが入っていた場合は他のオプションを使わないので正常終了させる
   process.exit(0);
