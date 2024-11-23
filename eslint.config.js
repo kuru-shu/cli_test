@@ -9,6 +9,7 @@ export default [
         ...globals.commonjs,
         ...globals.es2021,
         ...globals.node,
+        ...globals.jest,
       },
       parserOptions: {
         ecmaVersion: 12,
